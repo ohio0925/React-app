@@ -1,8 +1,19 @@
-import Image from "next/image";
+export const dynamic = "force-dynamic";
 
 async function getData() {
-  const res = await fetch("http://localhost:8000/");
-  return res.json();
+  try {
+    const res = await fetch("http://127.0.0.1:8000/", {
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      throw new Error("API error");
+    }
+
+    return res.json();
+  } catch (error) {
+    return { message: "API接続エラー" };
+  }
 }
 
 export default async function Page() {
