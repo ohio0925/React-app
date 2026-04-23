@@ -23,8 +23,20 @@ export default async function Page() {
     <div>
       <h1>コメント解析結果</h1>
 
-      {data.error && <p>{data.error}</p>}
+      {/* ランキング表示 */}
+      <h2>単語ランキング</h2>
+      {data.ranking?.length > 0 ? (
+        data.ranking.map(([word, count], i) => (
+          <div key={i}>
+            {i + 1}位：{word}（{count}回）
+          </div>
+        ))
+      ) : (
+        <p>ランキングなし</p>
+      )}
 
+      {/* 元のdocs表示（必要なら） */}
+      <h2>コメント分解</h2>
       {data.docs?.length > 0 ? (
         data.docs.map((doc, i) => (
           <div key={i}>

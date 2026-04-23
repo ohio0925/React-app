@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import requests
 import json
 from mecab_utils import mecab_sep
+from collections import Counter
 
 app = FastAPI()
 
@@ -117,4 +118,20 @@ def get_comments():
   for text in comments_list:
       words = mecab_sep(text)
       docs.append(words)    
-  return {"docs": docs}
+  
+  # docs作成後に追加
+  all_words = []
+
+  for words in docs:
+      all_words.extend(words)
+
+  # 出現回数カウント
+  counter = Counter(all_words)
+
+  # 上位20件
+  ranking = counter.most_common(20)
+
+  return {
+      "docs": docs,
+      "ranking": ranking
+}

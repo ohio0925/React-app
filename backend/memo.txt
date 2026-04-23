@@ -1,17 +1,11 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+#FastAPI起動(main.py)
+1.ターミナルでcd backendで階層に映る
+2.以下コマンド実行
+uvicorn main:app --reload
 
-app = FastAPI()
-
-#CORS設定
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # 開発中はこれでOK
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-@app.get("/")
-def root():
-    return {"message": "Hello from Python"}
+#フロント起動
+1.ターミナルでcd frontendで階層に移る
+2.以下コマンド実行
+npm run dev
+3.ブラウザにアクセス
+http://localhost:3000
