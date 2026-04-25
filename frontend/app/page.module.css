@@ -120,7 +120,8 @@
 
 .rankWord {
   font-size: 14px;
-  color:#0f0f0f
+  color: #0f0f0f;
+  font-weight: 500;
 }
 
 .rankCount {

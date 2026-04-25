@@ -9,10 +9,44 @@ type ApiResponse = {
   error?: string;
 };
 
+type CommentItem = {
+  id: number;
+  video_id: string;
+  comment_text: string;
+  created_at: string;
+};
+
 export default function Page() {
   const [url, setUrl] = useState("");
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const [selectedWord, setSelectedWord] = useState<string | null>(null);
+  const [matchedComments, setMatchedComments] = useState<CommentItem[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+
+  const handleWordClick = async (word: string) => {
+    setSelectedWord(word);
+    setSearchLoading(true);
+    setMatchedComments([]);
+
+    try {
+      const res = await fetch("http://127.0.0.1:8000/comments/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ word }),
+      });
+
+      if (!res.ok) throw new Error("検索エラー");
+
+      const result = await res.json();
+      setMatchedComments(result);
+    } catch (e) {
+      console.error(e);
+      setMatchedComments([]);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
 
   const handleSubmit = async () => {
     if (!url.trim()) return;
@@ -74,13 +108,19 @@ export default function Page() {
             {/* ランキング */}
             <div className={styles.card}>
               <div className={styles.sectionTitle}>単語ランキング</div>
+              <div className={styles.sectionTitle}>取得コメント数: {data.docs?.length ?? 0}</div>
             {data.ranking?.length ? (
               data.ranking.map(([word, count], i) => {
                 const maxCount = data?.ranking?.[0]?.[1] ?? 1;
                 const ratio = (count / maxCount) * 100;
 
                 return (
-                  <div key={i} className={styles.rankItem}>
+                  <div 
+                    key={i}
+                    className={styles.rankItem}
+                    onClick={() => handleWordClick(word)}
+                  >
+                    
                     {/* バー */}
                     <div
                       className={styles.rankBar}
@@ -101,10 +141,30 @@ export default function Page() {
             ) : (
               <div className={styles.empty}>ランキングなし</div>
             )}
+            {selectedWord && (
+              <div className={styles.commentSection}>
+                <h2>{selectedWord} を含むコメント</h2>
+                {searchLoading ? (
+                  <div>検索中...</div>
+                ) : matchedComments.length ? (
+                  matchedComments.map((comment) => (
+                    <div key={comment.id} className={styles.commentItem}>
+                      <div>{comment.comment_text}</div>
+                      <div className={styles.commentMeta}>
+                        {comment.video_id} / {new Date(comment.created_at).toLocaleString()}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div>該当するコメントはありません</div>
+                )}
+              </div>
+            )}
             </div>
           </>
         )}
       </div>
     </div>
+    
   );
 }

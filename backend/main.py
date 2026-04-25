@@ -6,6 +6,8 @@ from mecab_utils import mecab_sep
 from collections import Counter
 from pydantic import BaseModel
 from urllib.parse import urlparse, parse_qs
+from database import Comment, SessionLocal
+from datetime import datetime
 
 app = FastAPI()
 
@@ -19,6 +21,19 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+def save_comments_to_db(video_id: str, comments_list: list):
+    db = SessionLocal()
+    try:
+        for comment_text in comments_list:
+            new_comment = Comment(video_id=video_id, comment_text=comment_text)
+            db.add(new_comment)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        print(f"DB保存エラー: {e}")
+    finally:
+        db.close()
 
 def extract_video_id(url: str) -> str | None:
     parsed = urlparse(url)
@@ -38,6 +53,26 @@ def extract_video_id(url: str) -> str | None:
         return parsed.path.lstrip("/")
 
     return None
+
+class SearchWordRequest(BaseModel):
+    word: str
+
+@app.post("/comments/search")
+def search_comments(data: SearchWordRequest):
+    db = SessionLocal()
+    try:
+        results = db.query(Comment).filter(Comment.comment_text.contains(data.word)).all()
+        return [
+            {
+                "id": comment.id,
+                "video_id": comment.video_id,
+                "comment_text": comment.comment_text,
+                "created_at": comment.created_at.isoformat(),
+            }
+            for comment in results
+        ]
+    finally:
+        db.close()
 
 @app.post("/comments")
 def get_comments(data: RequestData):
@@ -60,7 +95,7 @@ def get_comments(data: RequestData):
       'key': API_KEY,
       'part': 'snippet',
       'videoId': video_id,#対象動画の動画ID
-      'order': 'relevance',#人気順でソート
+      'order': 'time',#新しい順でソート
       'textFormat': 'plaintext',
       'maxResults': 100,#最大100件取得
     }
@@ -157,8 +192,15 @@ def get_comments(data: RequestData):
 
   # 上位20件
   ranking = counter.most_common(20)
+  
+  # コメントをDBに保存
+  save_comments_to_db(VIDEO_ID, comments_list)
 
   return {
       "docs": docs,
       "ranking": ranking
 }
+  
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
