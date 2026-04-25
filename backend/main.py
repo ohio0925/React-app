@@ -4,9 +4,14 @@ import requests
 import json
 from mecab_utils import mecab_sep
 from collections import Counter
+from pydantic import BaseModel
+from urllib.parse import urlparse, parse_qs
 
 app = FastAPI()
 
+class RequestData(BaseModel):
+    url: str
+    
 # CORS設定（フロントから叩けるようにする）
 app.add_middleware(
     CORSMiddleware,
@@ -15,13 +20,35 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/comments")
-def get_comments():
+def extract_video_id(url: str) -> str | None:
+    parsed = urlparse(url)
+
+    # 通常URL: https://www.youtube.com/watch?v=xxxx
+    if parsed.hostname in ["www.youtube.com", "youtube.com"]:
+        query = parse_qs(parsed.query)
+        if "v" in query:
+            return query["v"][0]
+
+        # shorts対応
+        if parsed.path.startswith("/shorts/"):
+            return parsed.path.split("/")[2]
+
+    # 短縮URL: https://youtu.be/xxxx
+    if parsed.hostname == "youtu.be":
+        return parsed.path.lstrip("/")
+
+    return None
+
+@app.post("/comments")
+def get_comments(data: RequestData):
   URL = 'https://www.googleapis.com/youtube/v3/'
   # ここにAPI KEYを入力
   API_KEY = 'AIzaSyAfMrA-sVhY_ntbqiRsPfnIo6ZoWan8S_k'
   # ここにVideo IDを入力
-  VIDEO_ID = 'myjTC87kw8Y'
+  VIDEO_ID = extract_video_id(data.url)
+  
+  if not VIDEO_ID:
+    return {"error": "videoIdを取得できません"}
 
   # コメントを格納するリスト
   comments_list = []

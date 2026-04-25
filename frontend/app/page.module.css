@@ -1,0 +1,183 @@
+:root {
+  --yt-red: #ff0000;
+  --yt-red-soft: #ff4d4d;
+  --bg: #f9f9f9;
+  --card: #ffffff;
+  --text: #0f0f0f;
+  --muted: #606060;
+  --border: #e5e5e5;
+}
+
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 720px;
+}
+
+/* ヘッダー */
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: var(--text);
+}
+
+.title span {
+  color: var(--yt-red);
+}
+
+/* 入力エリア */
+.inputGroup {
+  display: flex;
+  gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  margin-bottom: 24px;
+}
+
+.input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 12px 16px;
+  font-size: 14px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.button {
+  background: var(--yt-red);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.button:hover {
+  background: var(--yt-red-soft);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* カード */
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+/* セクションタイトル */
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+/* ランキング */
+.rankItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 10px;
+  transition: background 0.15s;
+}
+
+.rankItem:hover {
+  background: #f2f2f2;
+}
+
+.rankLeft {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.rankNum {
+  font-weight: 700;
+  color: var(--yt-red);
+}
+
+.rankWord {
+  font-size: 14px;
+  color:#0f0f0f
+}
+
+.rankCount {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* コメント分解 */
+.docItem {
+  font-size: 13px;
+  color: var(--muted);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 13px;
+  padding: 12px 0;
+}
+
+/* ローディング */
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: var(--muted);
+}
+
+.rankItem {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* ← 追加 */
+.rankBar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(255, 0, 0, 0.08);
+  transition: width 0.4s ease;
+  z-index: 0;
+}
+
+.rankContent {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.rankLeft {
+  display: flex;
+  gap: 10px;
+}
