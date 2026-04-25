@@ -25,8 +25,17 @@ app.add_middleware(
 def save_comments_to_db(video_id: str, comments_list: list):
     db = SessionLocal()
     try:
+        # 同じ video_id の古いレコードを削除
+        db.query(Comment).filter(Comment.video_id == video_id).delete()
+        # 新しいコメントを挿入
         for comment_text in comments_list:
-            new_comment = Comment(video_id=video_id, comment_text=comment_text)
+            words = mecab_sep(comment_text)  # 形態素解析
+            words_json = json.dumps(words, ensure_ascii=False)
+            new_comment = Comment(
+                video_id=video_id, 
+                comment_text=comment_text, 
+                words=words_json
+            )
             db.add(new_comment)
         db.commit()
     except Exception as e:
@@ -56,17 +65,22 @@ def extract_video_id(url: str) -> str | None:
 
 class SearchWordRequest(BaseModel):
     word: str
+    video_id: str
 
 @app.post("/comments/search")
 def search_comments(data: SearchWordRequest):
     db = SessionLocal()
     try:
-        results = db.query(Comment).filter(Comment.comment_text.contains(data.word)).all()
+        # words JSON に word が含まれるレコードを検索
+        results = db.query(Comment).filter(
+            Comment.words.contains(f'"{data.word}"'),
+            Comment.video_id == data.video_id
+        ).all()
         return [
             {
                 "id": comment.id,
                 "video_id": comment.video_id,
-                "comment_text": comment.comment_text,
+                "comment_text": comment.comment_text,  # comment.comment ではなく comment だけ
                 "created_at": comment.created_at.isoformat(),
             }
             for comment in results
@@ -198,7 +212,8 @@ def get_comments(data: RequestData):
 
   return {
       "docs": docs,
-      "ranking": ranking
+      "ranking": ranking,
+      "video_id": VIDEO_ID,
 }
   
 if __name__ == "__main__":

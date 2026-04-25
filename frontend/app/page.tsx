@@ -6,6 +6,7 @@ import styles from "./page.module.css";
 type ApiResponse = {
   ranking?: [string, number][];
   docs?: string[][];
+  video_id?: string;
   error?: string;
 };
 
@@ -23,8 +24,14 @@ export default function Page() {
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [matchedComments, setMatchedComments] = useState<CommentItem[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [videoId, setVideoId] = useState<string | null>(null);
 
   const handleWordClick = async (word: string) => {
+    if (!videoId) {
+      console.error("videoId がありません");
+      return;
+    }
+
     setSelectedWord(word);
     setSearchLoading(true);
     setMatchedComments([]);
@@ -33,7 +40,7 @@ export default function Page() {
       const res = await fetch("http://127.0.0.1:8000/comments/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ word }),
+        body: JSON.stringify({ word, video_id: videoId }),
       });
 
       if (!res.ok) throw new Error("検索エラー");
@@ -67,6 +74,7 @@ export default function Page() {
 
       const result = await res.json();
       setData(result);
+      setVideoId(result.video_id ?? null);
     } catch (e) {
       console.error(e);
       setData({ error: "取得失敗" });
@@ -105,45 +113,47 @@ export default function Page() {
 
         {data && !data.error && (
           <>
-            {/* ランキング */}
-            <div className={styles.card}>
-              <div className={styles.sectionTitle}>単語ランキング</div>
-              <div className={styles.sectionTitle}>取得コメント数: {data.docs?.length ?? 0}</div>
-            {data.ranking?.length ? (
-              data.ranking.map(([word, count], i) => {
-                const maxCount = data?.ranking?.[0]?.[1] ?? 1;
-                const ratio = (count / maxCount) * 100;
+            {/* ランキング + コメントを並べるコンテナ */}
+            <div className={styles.cardsContainer}>
+              {/* ランキング */}
+              <div className={styles.card} style={{ flex: 1 }}>
+                <div className={styles.sectionTitle}>単語ランキング</div>
+                <div className={styles.sectionTitle}>取得コメント数: {data.docs?.length ?? 0}</div>
+                {data.ranking?.length ? (
+                  data.ranking.map(([word, count], i) => {
+                    const maxCount = data?.ranking?.[0]?.[1] ?? 1;
+                    const ratio = (count / maxCount) * 100;
 
-                return (
-                  <div 
-                    key={i}
-                    className={styles.rankItem}
-                    onClick={() => handleWordClick(word)}
-                  >
-                    
-                    {/* バー */}
-                    <div
-                      className={styles.rankBar}
-                      style={{ width: `${ratio}%` }}
-                    />
-
-                    {/* コンテンツ */}
-                    <div className={styles.rankContent}>
-                      <div className={styles.rankLeft}>
-                        <span className={styles.rankNum}>{i + 1}</span>
-                        <span className={styles.rankWord}>{word}</span>
+                    return (
+                      <div 
+                        key={i}
+                        className={styles.rankItem}
+                        onClick={() => handleWordClick(word)}
+                      >
+                        <div
+                          className={styles.rankBar}
+                          style={{ width: `${ratio}%` }}
+                        />
+                        <div className={styles.rankContent}>
+                          <div className={styles.rankLeft}>
+                            <span className={styles.rankNum}>{i + 1}</span>
+                            <span className={styles.rankWord}>{word}</span>
+                          </div>
+                          <span className={styles.rankCount}>{count}回</span>
+                        </div>
                       </div>
-                      <span className={styles.rankCount}>{count}回</span>
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <div className={styles.empty}>ランキングなし</div>
-            )}
-            {selectedWord && (
-              <div className={styles.commentSection}>
-                <h2>{selectedWord} を含むコメント</h2>
+                    );
+                  })
+                ) : (
+                  <div className={styles.empty}>ランキングなし</div>
+                )}
+              </div>
+
+              {/* コメント（常に表示） */}
+              <div className={styles.card} style={{ flex: 1, maxHeight: '600px', overflowY: 'auto' }}>
+                <h2 className={styles.sectionTitle}>
+                  {selectedWord ? `${selectedWord} を含むコメント` : "コメント"}
+                </h2>
                 {searchLoading ? (
                   <div>検索中...</div>
                 ) : matchedComments.length ? (
@@ -155,11 +165,12 @@ export default function Page() {
                       </div>
                     </div>
                   ))
-                ) : (
+                ) : selectedWord ? (
                   <div>該当するコメントはありません</div>
+                ) : (
+                  <div className={styles.empty}>単語をクリックしてください</div>
                 )}
               </div>
-            )}
             </div>
           </>
         )}
