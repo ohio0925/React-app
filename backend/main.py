@@ -194,12 +194,12 @@ def get_comments(data: RequestData):
   for text in comments_list:
       words = mecab_sep(text)
       docs.append(words)    
-  
-  # docs作成後に追加
+
+  # docs作成後に追加（同じコメント内の重複を除去）
   all_words = []
 
   for words in docs:
-      all_words.extend(words)
+      all_words.extend(set(words))  # set() で重複除去
 
   # 出現回数カウント
   counter = Counter(all_words)

@@ -117,7 +117,7 @@ export default function Page() {
             <div className={styles.cardsContainer}>
               {/* ランキング */}
               <div className={styles.card} style={{ flex: 1 }}>
-                <div className={styles.sectionTitle}>単語ランキング</div>
+                <div className={styles.sectionTitle}>単語出現ランキング</div>
                 <div className={styles.sectionTitle}>取得コメント数: {data.docs?.length ?? 0}</div>
                 {data.ranking?.length ? (
                   data.ranking.map(([word, count], i) => {
@@ -139,7 +139,7 @@ export default function Page() {
                             <span className={styles.rankNum}>{i + 1}</span>
                             <span className={styles.rankWord}>{word}</span>
                           </div>
-                          <span className={styles.rankCount}>{count}回</span>
+                          <span className={styles.rankCount}>{count}件</span>
                         </div>
                       </div>
                     );
