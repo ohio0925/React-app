@@ -47,6 +47,7 @@
 
 .input {
   flex: 1;
+  color: var(--text);
   border: none;
   outline: none;
   padding: 12px 16px;
@@ -219,4 +220,16 @@
   border-radius: 16px;
   border: 1px solid var(--border);
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* page.module.css に追加 */
+.searchGroup {
+  display: flex;
+  gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  margin-bottom: 10px;
 }

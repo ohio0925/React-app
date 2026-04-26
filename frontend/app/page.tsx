@@ -21,35 +21,33 @@ export default function Page() {
   const [url, setUrl] = useState("");
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
-  const [selectedWord, setSelectedWord] = useState<string | null>(null);
-  const [matchedComments, setMatchedComments] = useState<CommentItem[]>([]);
-  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchWord, setSearchWord] = useState("");  // 新しいstate: 検索単語
+  const [searchResults, setSearchResults] = useState<CommentItem[]>([]);  // 新しいstate: 検索結果
+  const [searchLoading, setSearchLoading] = useState(false);  // 新しいstate: 検索中フラグ
   const [videoId, setVideoId] = useState<string | null>(null);
 
-  const handleWordClick = async (word: string) => {
-    if (!videoId) {
-      console.error("videoId がありません");
-      return;
-    }
+  // 検索処理（ランキングクリックと手動検索を統合）
+  const handleSearch = async (word?: string) => {
+    const targetWord = word || searchWord;  // ランキングクリック時はwordを渡す
+    if (!targetWord.trim() || !videoId) return;
 
-    setSelectedWord(word);
     setSearchLoading(true);
-    setMatchedComments([]);
+    setSearchResults([]);
 
     try {
       const res = await fetch("http://127.0.0.1:8000/comments/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ word, video_id: videoId }),
+        body: JSON.stringify({ word: targetWord, video_id: videoId }),
       });
 
       if (!res.ok) throw new Error("検索エラー");
 
       const result = await res.json();
-      setMatchedComments(result);
+      setSearchResults(result);
     } catch (e) {
       console.error(e);
-      setMatchedComments([]);
+      setSearchResults([]);
     } finally {
       setSearchLoading(false);
     }
@@ -60,6 +58,7 @@ export default function Page() {
 
     setLoading(true);
     setData(null);
+    setSearchResults([]);  // URL変更時に検索結果をリセット
 
     try {
       const res = await fetch("http://127.0.0.1:8000/comments", {
@@ -128,7 +127,7 @@ export default function Page() {
                       <div 
                         key={i}
                         className={styles.rankItem}
-                        onClick={() => handleWordClick(word)}
+                        onClick={() => handleSearch(word)}  // ランキングクリックで検索
                       >
                         <div
                           className={styles.rankBar}
@@ -151,13 +150,31 @@ export default function Page() {
 
               {/* コメント（常に表示） */}
               <div className={styles.card} style={{ flex: 1, maxHeight: '600px', overflowY: 'auto' }}>
+                {/* コメントカードの上に検索フォームを追加 */}
+                <div className={styles.searchGroup}>
+                  <input
+                    className={styles.input}
+                    type="text"
+                    placeholder="検索単語を入力"
+                    value={searchWord}
+                    onChange={(e) => setSearchWord(e.target.value)}
+                  />
+                  <button
+                    className={styles.button}
+                    onClick={() => handleSearch()}
+                    disabled={searchLoading || !videoId}
+                  >
+                    {searchLoading ? "検索中..." : "検索"}
+                  </button>
+                </div>
+
                 <h2 className={styles.sectionTitle}>
-                  {selectedWord ? `${selectedWord} を含むコメント` : "コメント"}
+                  {searchWord ? `"${searchWord}" を含むコメント` : "コメント"}
                 </h2>
                 {searchLoading ? (
                   <div>検索中...</div>
-                ) : matchedComments.length ? (
-                  matchedComments.map((comment) => (
+                ) : searchResults.length ? (
+                  searchResults.map((comment) => (
                     <div key={comment.id} className={styles.commentItem}>
                       <div>{comment.comment_text}</div>
                       <div className={styles.commentMeta}>
@@ -165,10 +182,10 @@ export default function Page() {
                       </div>
                     </div>
                   ))
-                ) : selectedWord ? (
+                ) : searchWord ? (
                   <div>該当するコメントはありません</div>
                 ) : (
-                  <div className={styles.empty}>単語をクリックしてください</div>
+                  <div className={styles.empty}>単語をクリックまたは検索してください</div>
                 )}
               </div>
             </div>
@@ -176,6 +193,5 @@ export default function Page() {
         )}
       </div>
     </div>
-    
   );
 }
