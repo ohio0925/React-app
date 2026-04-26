@@ -118,7 +118,7 @@ export default function Page() {
               {/* ランキング */}
               <div className={styles.card} style={{ flex: 1 }}>
                 <div className={styles.sectionTitle}>単語出現ランキング</div>
-                <div className={styles.sectionTitle}>取得コメント数: {data.docs?.length ?? 0}</div>
+                <div className={styles.sectionTitle}>取得コメント数: {data.docs?.length ?? 0}件</div>
                 {data.ranking?.length ? (
                   data.ranking.map(([word, count], i) => {
                     const maxCount = data?.ranking?.[0]?.[1] ?? 1;
