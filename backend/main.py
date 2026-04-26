@@ -71,16 +71,16 @@ class SearchWordRequest(BaseModel):
 def search_comments(data: SearchWordRequest):
     db = SessionLocal()
     try:
-        # words JSON に word が含まれるレコードを検索
+        # comment_text に word が含まれるレコードを検索（部分一致）
         results = db.query(Comment).filter(
-            Comment.words.contains(f'"{data.word}"'),
+            Comment.comment_text.contains(data.word),  # words から comment_text に変更
             Comment.video_id == data.video_id
         ).all()
         return [
             {
                 "id": comment.id,
                 "video_id": comment.video_id,
-                "comment_text": comment.comment_text,  # comment.comment ではなく comment だけ
+                "comment_text": comment.comment_text,
                 "created_at": comment.created_at.isoformat(),
             }
             for comment in results

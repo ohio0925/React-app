@@ -21,14 +21,14 @@ export default function Page() {
   const [url, setUrl] = useState("");
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
-  const [searchWord, setSearchWord] = useState("");  // 新しいstate: 検索単語
-  const [searchResults, setSearchResults] = useState<CommentItem[]>([]);  // 新しいstate: 検索結果
-  const [searchLoading, setSearchLoading] = useState(false);  // 新しいstate: 検索中フラグ
+  const [searchWord, setSearchWord] = useState("");  // 統合された検索単語state
+  const [searchResults, setSearchResults] = useState<CommentItem[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [videoId, setVideoId] = useState<string | null>(null);
 
-  // 検索処理（ランキングクリックと手動検索を統合）
+  // 検索処理（searchWordのみを使用）
   const handleSearch = async (word?: string) => {
-    const targetWord = word || searchWord;  // ランキングクリック時はwordを渡す
+    const targetWord = word ?? searchWord;
     if (!targetWord.trim() || !videoId) return;
 
     setSearchLoading(true);
@@ -59,6 +59,7 @@ export default function Page() {
     setLoading(true);
     setData(null);
     setSearchResults([]);  // URL変更時に検索結果をリセット
+    setSearchWord("");  // 検索単語もリセット
 
     try {
       const res = await fetch("http://127.0.0.1:8000/comments", {
@@ -127,7 +128,10 @@ export default function Page() {
                       <div 
                         key={i}
                         className={styles.rankItem}
-                        onClick={() => handleSearch(word)}  // ランキングクリックで検索
+                        onClick={() => {
+                          setSearchWord(word);
+                          handleSearch(word);
+                        }}
                       >
                         <div
                           className={styles.rankBar}
@@ -169,7 +173,7 @@ export default function Page() {
                 </div>
 
                 <h2 className={styles.sectionTitle}>
-                  {searchWord ? `"${searchWord}" を含むコメント` : "コメント"}
+                  {searchResults.length > 0 ? `"${searchWord}" を含むコメント` : "コメント"}
                 </h2>
                 {searchLoading ? (
                   <div>検索中...</div>
