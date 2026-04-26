@@ -26,6 +26,7 @@ export default function Page() {
   const [searchResults, setSearchResults] = useState<CommentItem[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [videoId, setVideoId] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc' | null>(null);
 
   // 検索処理（searchWordのみを使用）
   const handleSearch = async (word?: string) => {
@@ -100,6 +101,12 @@ export default function Page() {
     );
   };
 
+  const sortedResults = sortOrder === null
+  ? searchResults
+  : [...searchResults].sort((a, b) =>
+      sortOrder === 'desc' ? b.like_cnt - a.like_cnt : a.like_cnt - b.like_cnt
+    );
+  
   return (
     <div className={styles.page}>
       <div className={styles.container}>
@@ -192,10 +199,30 @@ export default function Page() {
                 <h2 className={styles.sectionTitle}>
                   {searchResults.length > 0 ? `"${searchWord}" を含むコメント` : "コメント"}
                 </h2>
+                <div className={styles.sortControls}>
+                <span>いいね数で並び替え：</span>
+                <button
+                  onClick={() => setSortOrder('desc')}
+                  className={sortOrder === 'desc' ? styles.sortButtonActive : styles.sortButton}
+                >
+                  ▼ 降順
+                </button>
+                <button
+                  onClick={() => setSortOrder('asc')}
+                  className={sortOrder === 'asc' ? styles.sortButtonActive : styles.sortButton}
+                >
+                  ▲ 昇順
+                </button>
+                {sortOrder !== null && (
+                  <button onClick={() => setSortOrder(null)} className={styles.sortButtonReset}>
+                    リセット
+                  </button>
+                )}
+              </div>
                 {searchLoading ? (
                   <div>検索中...</div>
                 ) : searchResults.length ? (
-                  searchResults.map((comment) => (
+                  sortedResults.map((comment) => (
                     <div key={comment.id} className={styles.commentItem}>
                       <div>{highlightText(comment.comment_text, searchWord)}</div>
                       <div className={styles.commentMeta}>
