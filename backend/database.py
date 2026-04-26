@@ -24,7 +24,7 @@ class Comment(Base):
     id = Column(Integer, primary_key=True, index=True)
     video_id = Column(String, nullable=False, index=True)
     comment_text = Column(Text, nullable=False)
-    words = Column(Text, nullable=False)  # 形態素解析結果をJSONで保存
+    words = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 # テーブル作成

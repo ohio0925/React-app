@@ -83,6 +83,22 @@ export default function Page() {
     }
   };
 
+  // テキストをハイライト処理する関数
+  const highlightText = (text: string, highlight: string) => {
+    if (!highlight.trim()) return text;
+
+    // 大文字小文字を区別しないで分割
+    const parts = text.split(new RegExp(`(${highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'));
+    
+    return parts.map((part, i) =>
+      part.toLowerCase() === highlight.toLowerCase() ? (
+        <mark key={i} style={{ backgroundColor: '#ffff99', padding: '2px' }}>{part}</mark>
+      ) : (
+        part
+      )
+    );
+  };
+
   return (
     <div className={styles.page}>
       <div className={styles.container}>
@@ -180,7 +196,7 @@ export default function Page() {
                 ) : searchResults.length ? (
                   searchResults.map((comment) => (
                     <div key={comment.id} className={styles.commentItem}>
-                      <div>{comment.comment_text}</div>
+                      <div>{highlightText(comment.comment_text, searchWord)}</div>
                       <div className={styles.commentMeta}>
                         {comment.video_id} / {new Date(comment.created_at).toLocaleString()}
                       </div>

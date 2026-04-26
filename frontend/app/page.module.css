@@ -233,3 +233,11 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.04);
   margin-bottom: 10px;
 }
+
+/* mark */
+.mark {
+  background-color: #ffff99;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-weight: 500;
+}
