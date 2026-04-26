@@ -28,13 +28,16 @@ def save_comments_to_db(video_id: str, comments_list: list):
         # 同じ video_id の古いレコードを削除
         db.query(Comment).filter(Comment.video_id == video_id).delete()
         # 新しいコメントを挿入
-        for comment_text in comments_list:
+        for comment_data in comments_list:
+            comment_text = comment_data["text"]
+            like_cnt = comment_data["like_cnt"]
             words = mecab_sep(comment_text)  # 形態素解析
             words_json = json.dumps(words, ensure_ascii=False)
             new_comment = Comment(
                 video_id=video_id, 
                 comment_text=comment_text, 
-                words=words_json
+                words=words_json,
+                like_cnt=like_cnt  # 新しいフィールドを追加
             )
             db.add(new_comment)
         db.commit()
@@ -81,6 +84,7 @@ def search_comments(data: SearchWordRequest):
                 "id": comment.id,
                 "video_id": comment.video_id,
                 "comment_text": comment.comment_text,
+                "like_cnt": comment.like_cnt,
                 "created_at": comment.created_at.isoformat(),
             }
             for comment in results
@@ -99,7 +103,7 @@ def get_comments(data: RequestData):
   if not VIDEO_ID:
     return {"error": "videoIdを取得できません"}
 
-  # コメントを格納するリスト
+  # コメントを格納するリスト（辞書形式に変更）
   comments_list = []
 
   # コメントを取得する関数
@@ -134,10 +138,12 @@ def get_comments(data: RequestData):
       text = comment_info['snippet']['topLevelComment']['snippet']['textDisplay']
       # 返信数
       reply_cnt = comment_info['snippet']['totalReplyCount']
+      # グッド数
+      like_cnt = comment_info['snippet']['topLevelComment']['snippet']['likeCount']
       # Id 
       parentId = comment_info['snippet']['topLevelComment']['id']
-      # コメントリストにコメントを格納
-      comments_list.append(text)
+      # コメントリストにコメントとlike_cntを格納（辞書形式）
+      comments_list.append({"text": text, "like_cnt": like_cnt})
       # コメントに対する返信を取得
       if reply_cnt > 0:
         cno = 1
@@ -176,8 +182,8 @@ def get_comments(data: RequestData):
       # ユーザー名
       user_name = comment_info['snippet']['authorDisplayName']
 
-      # コメントリストにコメントを格納
-      comments_list.append(text)
+      # コメントリストにコメントとlike_cntを格納
+      comments_list.append({"text": text, "like_cnt": like_cnt})
       cno = cno + 1
 
     if 'nextPageToken' in resource:

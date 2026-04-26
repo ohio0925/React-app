@@ -25,6 +25,7 @@ class Comment(Base):
     video_id = Column(String, nullable=False, index=True)
     comment_text = Column(Text, nullable=False)
     words = Column(Text, nullable=False)
+    like_cnt = Column(Integer, default=0)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 # テーブル作成

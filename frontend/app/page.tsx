@@ -14,6 +14,7 @@ type CommentItem = {
   id: number;
   video_id: string;
   comment_text: string;
+  like_cnt: number;
   created_at: string;
 };
 
@@ -198,7 +199,7 @@ export default function Page() {
                     <div key={comment.id} className={styles.commentItem}>
                       <div>{highlightText(comment.comment_text, searchWord)}</div>
                       <div className={styles.commentMeta}>
-                        {comment.video_id} / {new Date(comment.created_at).toLocaleString()}
+                        {comment.video_id} / {new Date(comment.created_at).toLocaleString()} / いいね数: {comment.like_cnt}
                       </div>
                     </div>
                   ))
