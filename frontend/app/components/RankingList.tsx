@@ -15,7 +15,7 @@ export default function RankingList({
   handleSearch
 }: Props) {
   return (
-    <div className={styles.card} style={{ flex: 1 }}>
+    <>
       <div className={styles.sectionTitle}>
         頻出単語ランキング
       </div>
@@ -53,6 +53,6 @@ export default function RankingList({
       ) : (
         <div className={styles.empty}>ランキングなし</div>
       )}
-    </div>
+    </>
   );
 }

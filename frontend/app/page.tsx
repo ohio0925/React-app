@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { fetchComments, searchComments } from "@/app/services/commentApi";
 import styles from "@/app/page.module.css";
 import UrlForm from "@/app/components/UrlForm";
 import RankingList from "@/app/components/RankingList";
@@ -8,6 +9,7 @@ import CommentSearchForm from "@/app/components/CommentSearchForm";
 import SortControls from "@/app/components/SortControls";
 import CommentList from "@/app/components/CommentList";
 
+// APIレスポンスの型定義
 type ApiResponse = {
   ranking?: [string, number][];
   docs?: string[][];
@@ -15,6 +17,7 @@ type ApiResponse = {
   error?: string;
 };
 
+// コメントアイテムの型定義
 type CommentItem = {
   id: number;
   video_id: string;
@@ -23,43 +26,25 @@ type CommentItem = {
   created_at: string;
 };
 
+// ページコンポーネント
 export default function Page() {
+  // URL関連
   const [url, setUrl] = useState("");
-  const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
-  const [searchWord, setSearchWord] = useState("");  // 統合された検索単語state
+
+  // API結果
+  const [data, setData] = useState<ApiResponse | null>(null);
+  const [videoId, setVideoId] = useState<string | null>(null);
+
+  // 検索関連
+  const [searchWord, setSearchWord] = useState("");
   const [searchResults, setSearchResults] = useState<CommentItem[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
-  const [videoId, setVideoId] = useState<string | null>(null);
+
+  // ソート
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc' | null>(null);
 
-  // 検索処理（searchWordのみを使用）
-  const handleSearch = async (word?: string) => {
-    const targetWord = word ?? searchWord;
-    if (!targetWord.trim() || !videoId) return;
-
-    setSearchLoading(true);
-    setSearchResults([]);
-
-    try {
-      const res = await fetch("http://127.0.0.1:8000/comments/search", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ word: targetWord, video_id: videoId }),
-      });
-
-      if (!res.ok) throw new Error("検索エラー");
-
-      const result = await res.json();
-      setSearchResults(result);
-    } catch (e) {
-      console.error(e);
-      setSearchResults([]);
-    } finally {
-      setSearchLoading(false);
-    }
-  };
-
+  // URL送信処理
   const handleSubmit = async () => {
     if (!url.trim()) return;
 
@@ -69,17 +54,10 @@ export default function Page() {
     setSearchWord("");  // 検索単語もリセット
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/comments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ url }),
-      });
+      // APIにURLを送信して結果を取得
+      const result = await fetchComments(url);
 
-      if (!res.ok) throw new Error("APIエラー");
-
-      const result = await res.json();
+      // APIからのレスポンスをstateに保存
       setData(result);
       setVideoId(result.video_id ?? null);
     } catch (e) {
@@ -87,6 +65,28 @@ export default function Page() {
       setData({ error: "取得失敗" });
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 検索処理
+  const handleSearch = async (word?: string) => {
+    const targetWord = word ?? searchWord;
+    if (!targetWord.trim() || !videoId) return;
+
+    setSearchLoading(true);
+    setSearchResults([]);
+
+    try {
+      // APIに検索ワードとvideoIdを送信して結果を取得
+      const result = await searchComments(targetWord, videoId);
+
+      // APIからのレスポンスをstateに保存
+      setSearchResults(result);
+    } catch (e) {
+      console.error(e);
+      setSearchResults([]);
+    } finally {
+      setSearchLoading(false);
     }
   };
 
@@ -106,19 +106,24 @@ export default function Page() {
     );
   };
 
+  // ソートされた検索結果を計算
   const sortedResults = sortOrder === null
     ? searchResults
     : [...searchResults].sort((a, b) =>
       sortOrder === 'desc' ? b.like_cnt - a.like_cnt : a.like_cnt - b.like_cnt
     );
 
+  // ページ全体の構成
   return (
     <div className={styles.page}>
       <div className={styles.container}>
+
+        {/* ヘッダー */}
         <h1 className={styles.title}>
           YouTube <span>コメント分析</span>
         </h1>
 
+        {/* URL入力フォーム */}
         <div>
           <UrlForm
             url={url}
@@ -127,26 +132,29 @@ export default function Page() {
             loading={loading}
           />
         </div>
-
+        {/* 読み込み中表示 */}
         {loading && <div className={styles.loading}>読み込み中...</div>}
-
+        {/* APIエラー表示 */}
         {data?.error && <div className={styles.empty}>{data.error}</div>}
 
+        {/* API成功時のランキングとコメント表示 */}
         {data && !data.error && (
           <>
-            {/* ランキング + コメントを並べるコンテナ */}
+            {/* 頻出単語ランキング + コメント一覧 */}
             <div className={styles.cardsContainer}>
-              {/* ランキング */}
+              {/* 頻出単語ランキング */}
+              <div className={styles.card} style={{ flex: 1 }}>
               <RankingList
                 ranking={data?.ranking}
                 docs={data?.docs}
                 setSearchWord={setSearchWord}
                 handleSearch={handleSearch}
               />
+              </div>
 
-              {/* コメント（常に表示） */}
+              {/* コメント一覧*/}
               <div className={styles.card} style={{ flex: 1, maxHeight: '600px', overflowY: 'auto' }}>
-                {/* コメントカードの上に検索フォームを追加 */}
+                {/* コメント検索フォーム */}
                 <CommentSearchForm
                   searchWord={searchWord}
                   setSearchWord={setSearchWord}
@@ -169,6 +177,7 @@ export default function Page() {
                   highlightText={highlightText}
                 />
               </div>
+
             </div>
           </>
         )}

@@ -1,0 +1,21 @@
+export const fetchComments = async (url: string) => {
+  const res = await fetch("http://127.0.0.1:8000/comments", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ url }),
+  });
+
+  if (!res.ok) throw new Error("APIエラー");
+  return res.json();
+};
+
+export const searchComments = async (word: string, video_id: string) => {
+  const res = await fetch("http://127.0.0.1:8000/comments/search", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ word, video_id }),
+  });
+
+  if (!res.ok) throw new Error("検索エラー");
+  return res.json();
+};
