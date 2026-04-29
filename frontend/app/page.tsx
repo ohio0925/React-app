@@ -8,6 +8,7 @@ import RankingList from "@/app/components/RankingList";
 import CommentSearchForm from "@/app/components/CommentSearchForm";
 import SortControls from "@/app/components/SortControls";
 import CommentList from "@/app/components/CommentList";
+import Tabs from "@/app/components/Tabs";
 
 // APIレスポンスの型定義
 type ApiResponse = {
@@ -43,6 +44,9 @@ export default function Page() {
 
   // ソート
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc' | null>(null);
+
+  // タブ切り替え
+  const [activeTab, setActiveTab] = useState<"rankinglist" | "ai_summary">("rankinglist");
 
   // URL送信処理
   const handleSubmit = async () => {
@@ -140,44 +144,62 @@ export default function Page() {
         {/* API成功時のランキングとコメント表示 */}
         {data && !data.error && (
           <>
+            {/* タブ切り替え */}
+            <Tabs
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            />
+
             {/* 頻出単語ランキング + コメント一覧 */}
             <div className={styles.cardsContainer}>
-              {/* 頻出単語ランキング */}
-              <div className={styles.card} style={{ flex: 1 }}>
-              <RankingList
-                ranking={data?.ranking}
-                docs={data?.docs}
-                setSearchWord={setSearchWord}
-                handleSearch={handleSearch}
-              />
-              </div>
+              {activeTab === "rankinglist" &&
+                <>
+                  {/* 頻出単語ランキング */}
+                  <div className={styles.card} style={{ flex: 1 }}>
+                    <RankingList
+                      ranking={data?.ranking}
+                      docs={data?.docs}
+                      setSearchWord={setSearchWord}
+                      handleSearch={handleSearch}
+                    />
+                  </div>
 
-              {/* コメント一覧*/}
-              <div className={styles.card} style={{ flex: 1, maxHeight: '600px', overflowY: 'auto' }}>
-                {/* コメント検索フォーム */}
-                <CommentSearchForm
-                  searchWord={searchWord}
-                  setSearchWord={setSearchWord}
-                  handleSearch={handleSearch}
-                  searchLoading={searchLoading}
-                  videoId={videoId}
-                />
+                  {/* コメント一覧*/}
+                  <div className={styles.card} style={{ flex: 1, maxHeight: '600px', overflowY: 'auto' }}>
+                    {/* コメント検索フォーム */}
+                    <CommentSearchForm
+                      searchWord={searchWord}
+                      setSearchWord={setSearchWord}
+                      handleSearch={handleSearch}
+                      searchLoading={searchLoading}
+                      videoId={videoId}
+                    />
 
-                <h2 className={styles.sectionTitle}>
-                  {searchResults.length > 0 ? `"${searchWord}" を含むコメント` : "コメント"}
-                </h2>
-                <SortControls
-                  sortOrder={sortOrder}
-                  setSortOrder={setSortOrder}
-                />
-                <CommentList
-                  searchLoading={searchLoading}
-                  searchResults={sortedResults}
-                  searchWord={searchWord}
-                  highlightText={highlightText}
-                />
-              </div>
+                    <h2 className={styles.sectionTitle}>
+                      {searchResults.length > 0 ? `"${searchWord}" を含むコメント` : "コメント"}
+                    </h2>
+                    <SortControls
+                      sortOrder={sortOrder}
+                      setSortOrder={setSortOrder}
+                    />
+                    <CommentList
+                      searchLoading={searchLoading}
+                      searchResults={sortedResults}
+                      searchWord={searchWord}
+                      highlightText={highlightText}
+                    />
+                  </div>
+                </>
+              }
 
+              {activeTab === "ai_summary" &&
+                <>
+                  {/* AI要約 */}
+                  <div className={styles.card} style={{ flex: 1 }}>
+                    <span>AI要約</span>
+                  </div>
+                </>
+              }
             </div>
           </>
         )}
