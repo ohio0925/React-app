@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import styles from "./page.module.css";
+import styles from "@/app/page.module.css";
+import UrlForm from "@/app/components/UrlForm";
+import RankingList from "@/app/components/RankingList";
+import CommentSearchForm from "@/app/components/CommentSearchForm";
+import SortControls from "@/app/components/SortControls";
+import CommentList from "@/app/components/CommentList";
 
 type ApiResponse = {
   ranking?: [string, number][];
@@ -91,7 +96,7 @@ export default function Page() {
 
     // 大文字小文字を区別しないで分割
     const parts = text.split(new RegExp(`(${highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'));
-    
+
     return parts.map((part, i) =>
       part.toLowerCase() === highlight.toLowerCase() ? (
         <mark key={i} style={{ backgroundColor: '#ffff99', padding: '2px' }}>{part}</mark>
@@ -102,11 +107,11 @@ export default function Page() {
   };
 
   const sortedResults = sortOrder === null
-  ? searchResults
-  : [...searchResults].sort((a, b) =>
+    ? searchResults
+    : [...searchResults].sort((a, b) =>
       sortOrder === 'desc' ? b.like_cnt - a.like_cnt : a.like_cnt - b.like_cnt
     );
-  
+
   return (
     <div className={styles.page}>
       <div className={styles.container}>
@@ -114,21 +119,13 @@ export default function Page() {
           YouTube <span>コメント分析</span>
         </h1>
 
-        <div className={styles.inputGroup}>
-          <input
-            className={styles.input}
-            type="text"
-            placeholder="YouTube URLを入力"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
+        <div>
+          <UrlForm
+            url={url}
+            setUrl={setUrl}
+            handleSubmit={handleSubmit}
+            loading={loading}
           />
-          <button
-            className={styles.button}
-            onClick={handleSubmit}
-            disabled={loading}
-          >
-            {loading ? "解析中..." : "解析"}
-          </button>
         </div>
 
         {loading && <div className={styles.loading}>読み込み中...</div>}
@@ -140,101 +137,37 @@ export default function Page() {
             {/* ランキング + コメントを並べるコンテナ */}
             <div className={styles.cardsContainer}>
               {/* ランキング */}
-              <div className={styles.card} style={{ flex: 1 }}>
-                <div className={styles.sectionTitle}>単語出現ランキング</div>
-                <div className={styles.sectionTitle}>取得コメント数: {data.docs?.length ?? 0}件</div>
-                {data.ranking?.length ? (
-                  data.ranking.map(([word, count], i) => {
-                    const maxCount = data?.ranking?.[0]?.[1] ?? 1;
-                    const ratio = (count / maxCount) * 100;
-
-                    return (
-                      <div 
-                        key={i}
-                        className={styles.rankItem}
-                        onClick={() => {
-                          setSearchWord(word);
-                          handleSearch(word);
-                        }}
-                      >
-                        <div
-                          className={styles.rankBar}
-                          style={{ width: `${ratio}%` }}
-                        />
-                        <div className={styles.rankContent}>
-                          <div className={styles.rankLeft}>
-                            <span className={styles.rankNum}>{i + 1}</span>
-                            <span className={styles.rankWord}>{word}</span>
-                          </div>
-                          <span className={styles.rankCount}>{count}件</span>
-                        </div>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div className={styles.empty}>ランキングなし</div>
-                )}
-              </div>
+              <RankingList
+                ranking={data?.ranking}
+                docs={data?.docs}
+                setSearchWord={setSearchWord}
+                handleSearch={handleSearch}
+              />
 
               {/* コメント（常に表示） */}
               <div className={styles.card} style={{ flex: 1, maxHeight: '600px', overflowY: 'auto' }}>
                 {/* コメントカードの上に検索フォームを追加 */}
-                <div className={styles.searchGroup}>
-                  <input
-                    className={styles.input}
-                    type="text"
-                    placeholder="検索単語を入力"
-                    value={searchWord}
-                    onChange={(e) => setSearchWord(e.target.value)}
-                  />
-                  <button
-                    className={styles.button}
-                    onClick={() => handleSearch()}
-                    disabled={searchLoading || !videoId}
-                  >
-                    {searchLoading ? "検索中..." : "検索"}
-                  </button>
-                </div>
+                <CommentSearchForm
+                  searchWord={searchWord}
+                  setSearchWord={setSearchWord}
+                  handleSearch={handleSearch}
+                  searchLoading={searchLoading}
+                  videoId={videoId}
+                />
 
                 <h2 className={styles.sectionTitle}>
                   {searchResults.length > 0 ? `"${searchWord}" を含むコメント` : "コメント"}
                 </h2>
-                <div className={styles.sortControls}>
-                <span>いいね数で並び替え：</span>
-                <button
-                  onClick={() => setSortOrder('desc')}
-                  className={sortOrder === 'desc' ? styles.sortButtonActive : styles.sortButton}
-                >
-                  ▼ 降順
-                </button>
-                <button
-                  onClick={() => setSortOrder('asc')}
-                  className={sortOrder === 'asc' ? styles.sortButtonActive : styles.sortButton}
-                >
-                  ▲ 昇順
-                </button>
-                {sortOrder !== null && (
-                  <button onClick={() => setSortOrder(null)} className={styles.sortButtonReset}>
-                    リセット
-                  </button>
-                )}
-              </div>
-                {searchLoading ? (
-                  <div>検索中...</div>
-                ) : searchResults.length ? (
-                  sortedResults.map((comment) => (
-                    <div key={comment.id} className={styles.commentItem}>
-                      <div>{highlightText(comment.comment_text, searchWord)}</div>
-                      <div className={styles.commentMeta}>
-                        {comment.video_id} / {new Date(comment.created_at).toLocaleString()} / いいね数: {comment.like_cnt}
-                      </div>
-                    </div>
-                  ))
-                ) : searchWord ? (
-                  <div>該当するコメントはありません</div>
-                ) : (
-                  <div className={styles.empty}>単語をクリックまたは検索してください</div>
-                )}
+                <SortControls
+                  sortOrder={sortOrder}
+                  setSortOrder={setSortOrder}
+                />
+                <CommentList
+                  searchLoading={searchLoading}
+                  searchResults={sortedResults}
+                  searchWord={searchWord}
+                  highlightText={highlightText}
+                />
               </div>
             </div>
           </>

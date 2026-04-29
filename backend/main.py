@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from urllib.parse import urlparse, parse_qs
 from database import Comment, SessionLocal
 from datetime import datetime
+from sqlalchemy import or_
 
 app = FastAPI()
 
@@ -76,8 +77,8 @@ def search_comments(data: SearchWordRequest):
     try:
         # comment_text に word が含まれるレコードを検索（部分一致）
         results = db.query(Comment).filter(
-            Comment.comment_text.contains(data.word),  # words から comment_text に変更
-            Comment.video_id == data.video_id
+            Comment.video_id == data.video_id,
+            Comment.words.contains(data.word)
         ).all()
         return [
             {

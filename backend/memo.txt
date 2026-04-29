@@ -20,3 +20,9 @@ sqlalchemy
 #一括起動
 cd frontend
 npm run dev:full
+
+#sql確認
+1．vscode上の入力欄から>Sqlite: OpenDatabaseを入力
+2.確認したいテーブルを選択
+3.左下のsqlite explorerを選択
+4.showdatabaseを押下
