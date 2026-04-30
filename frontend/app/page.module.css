@@ -1,6 +1,7 @@
 :root {
   --yt-red: #ff0000;
   --yt-red-soft: #ff4d4d;
+  --yt-red-super-soft: #ffe5e5;
   --bg: #f9f9f9;
   --card: #ffffff;
   --text: #0f0f0f;
@@ -10,7 +11,7 @@
 
 .page {
   min-height: 100vh;
-  background: var(--bg);
+  background:  var(--bg);
   padding: 40px 20px;
   display: flex;
   justify-content: center;
@@ -84,6 +85,8 @@
   border: 1px solid var(--border);
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
   margin-bottom: 20px;
+  overflow-y: auto;
+  max-height: 650px;
 }
 
 /* セクションタイトル */
@@ -279,6 +282,7 @@
 .tabs {
   display: flex;
   border-bottom: 1px solid #ccc;
+  margin-bottom: 5px;
 }
 
 .tab {
@@ -292,6 +296,7 @@
 
 .tab:hover {
   background: #f2f2f2;
+  border-radius: 16px;
 }
 
 .activeTab {

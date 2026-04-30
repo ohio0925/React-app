@@ -150,8 +150,9 @@ export default function Page() {
               setActiveTab={setActiveTab}
             />
 
-            {/* 頻出単語ランキング + コメント一覧 */}
+            {/* カードコンテナ */}
             <div className={styles.cardsContainer}>
+              {/* 頻出単語ランキング + コメント一覧 */}
               {activeTab === "rankinglist" &&
                 <>
                   {/* 頻出単語ランキング */}
@@ -165,7 +166,7 @@ export default function Page() {
                   </div>
 
                   {/* コメント一覧*/}
-                  <div className={styles.card} style={{ flex: 1, maxHeight: '600px', overflowY: 'auto' }}>
+                  <div className={styles.card} style={{ flex: 1 }}>
                     {/* コメント検索フォーム */}
                     <CommentSearchForm
                       searchWord={searchWord}
@@ -192,9 +193,9 @@ export default function Page() {
                 </>
               }
 
+              {/* AI要約 */}
               {activeTab === "ai_summary" &&
                 <>
-                  {/* AI要約 */}
                   <div className={styles.card} style={{ flex: 1 }}>
                     <span>AI要約</span>
                   </div>
