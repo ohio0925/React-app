@@ -305,3 +305,28 @@
   border-bottom: 2px solid #0070f3;
   font-weight: bold;
 }
+
+.summaryText {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.summaryTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  border-bottom: 2px solid #0070f3;
+  color: var(--text);
+}
+
+.summaryContainer {
+  margin-top: 16px;
+  white-space: pre-wrap;
+  background: var(--card);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  margin-top: 20px;
+}

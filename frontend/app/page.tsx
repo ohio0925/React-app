@@ -54,6 +54,9 @@ export default function Page() {
   // タブ切り替え
   const [activeTab, setActiveTab] = useState<"rankinglist" | "ai_summary">("rankinglist");
 
+  // AI要約ロード中状態
+  const [aiSummaryLoading, setAiSummaryLoading] = useState(false);
+
   // URL送信処理
   const handleSubmit = async () => {
     if (!url.trim()) return;
@@ -104,7 +107,7 @@ export default function Page() {
   const handleFetchSummary = async () => {
     if (!videoId) return;
 
-    setLoading(true);
+    setAiSummaryLoading(true);
 
     try {
       const result = await fetchSummary(videoId);
@@ -112,7 +115,7 @@ export default function Page() {
     } catch (e) {
       console.error(e);
     } finally {
-      setLoading(false);
+      setAiSummaryLoading(false);
     }
   };
 
@@ -220,7 +223,7 @@ export default function Page() {
                 <>
                   <AiSummary
                     summary={summary?.text ?? ""}
-                    loading={loading}
+                    loading={aiSummaryLoading}
                     handleFetchSummary={handleFetchSummary}
                   />
                 </>
