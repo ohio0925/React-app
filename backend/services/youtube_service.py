@@ -1,6 +1,10 @@
 import requests
+from dotenv import load_dotenv
+import os
 
-API_KEY = "AIzaSyAfMrA-sVhY_ntbqiRsPfnIo6ZoWan8S_k"
+load_dotenv()
+
+API_KEY = os.getenv("YOUTUBE_API_KEY")
 BASE_URL = "https://www.googleapis.com/youtube/v3/"
 
 def fetch_comments(video_id: str):

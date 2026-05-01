@@ -2,10 +2,16 @@ import google.generativeai as genai
 from db.crud import get_comments_by_video_id
 from fastapi import APIRouter
 from schemas.request import SummaryRequest
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 router = APIRouter()
 
-genai.configure(api_key="AIzaSyC7iz8I2se_bBKeBbU8E6tVPda9ZzE5qO4")
+apikey = os.getenv("GEMINI_API_KEY")
+
+genai.configure(apikey)
 
 @router.post("/summary")
 def summarize(data: SummaryRequest):
