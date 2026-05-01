@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { fetchComments, searchComments } from "@/app/services/commentApi";
+import { fetchComments, searchComments, fetchSummary } from "@/app/services/commentApi";
 import styles from "@/app/page.module.css";
 import UrlForm from "@/app/components/UrlForm";
 import RankingList from "@/app/components/RankingList";
@@ -9,6 +9,7 @@ import CommentSearchForm from "@/app/components/CommentSearchForm";
 import SortControls from "@/app/components/SortControls";
 import CommentList from "@/app/components/CommentList";
 import Tabs from "@/app/components/Tabs";
+import AiSummary from "@/app/components/AiSummary";
 
 // APIレスポンスの型定義
 type ApiResponse = {
@@ -27,6 +28,10 @@ type CommentItem = {
   created_at: string;
 };
 
+type AiSummaryResponse = {
+  text: string;
+};
+
 // ページコンポーネント
 export default function Page() {
   // URL関連
@@ -36,6 +41,7 @@ export default function Page() {
   // API結果
   const [data, setData] = useState<ApiResponse | null>(null);
   const [videoId, setVideoId] = useState<string | null>(null);
+  const [summary, setSummary] = useState<AiSummaryResponse | null>(null);
 
   // 検索関連
   const [searchWord, setSearchWord] = useState("");
@@ -91,6 +97,22 @@ export default function Page() {
       setSearchResults([]);
     } finally {
       setSearchLoading(false);
+    }
+  };
+
+  // AI要約取得処理
+  const handleFetchSummary = async () => {
+    if (!videoId) return;
+
+    setLoading(true);
+
+    try {
+      const result = await fetchSummary(videoId);
+      setSummary(result);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -196,9 +218,11 @@ export default function Page() {
               {/* AI要約 */}
               {activeTab === "ai_summary" &&
                 <>
-                  <div className={styles.card} style={{ flex: 1 }}>
-                    <span>AI要約</span>
-                  </div>
+                  <AiSummary
+                    summary={summary?.text ?? ""}
+                    loading={loading}
+                    handleFetchSummary={handleFetchSummary}
+                  />
                 </>
               }
             </div>

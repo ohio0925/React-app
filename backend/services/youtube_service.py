@@ -48,7 +48,7 @@ def fetch_comments(video_id: str):
             no = no + 1
 
         if "nextPageToken" in data:
-            get_video_comment(data["nextPageToken"])
+            get_video_comment(no,video_id,data["nextPageToken"])
     
     # コメントに対する返信を取得する関数        
     def get_video_reply(no, cno, video_id, next_page_token, id):

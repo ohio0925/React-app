@@ -49,3 +49,18 @@ def search_comments_db(video_id: str, word: str):
         ]
     finally:
         db.close()
+
+def get_comments_by_video_id(video_id: str):
+    db = SessionLocal()
+    try:
+        results = db.query(Comment).filter(
+            Comment.video_id == video_id).order_by(Comment.like_cnt.desc()).all()
+
+        return [
+            {
+                "comment_text": r.comment_text,
+            }
+            for r in results
+        ]
+    finally:
+        db.close()

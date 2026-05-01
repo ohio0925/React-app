@@ -6,3 +6,6 @@ class RequestData(BaseModel):
 class SearchWordRequest(BaseModel):
     word: str
     video_id: str
+
+class SummaryRequest(BaseModel):
+    video_id: str

@@ -19,3 +19,14 @@ export const searchComments = async (word: string, video_id: string) => {
   if (!res.ok) throw new Error("検索エラー");
   return res.json();
 };
+
+export const fetchSummary = async (video_id: string) => {
+  const res = await fetch("http://127.0.0.1:8000/summary", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ video_id }),
+  });
+
+  if (!res.ok) throw new Error("要約エラー");
+  return res.json();
+};
