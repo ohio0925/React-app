@@ -11,7 +11,7 @@ router = APIRouter()
 
 apikey = os.getenv("GEMINI_API_KEY")
 
-genai.configure(apikey)
+genai.configure(api_key=apikey)
 
 @router.post("/summary")
 def summarize(data: SummaryRequest):
