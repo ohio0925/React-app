@@ -4,3 +4,4 @@ sqlalchemy
 requests
 python-jose[cryptography]
 passlib[bcrypt]
+python-dotenv
