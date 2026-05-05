@@ -17,6 +17,14 @@ SessionLocal = sessionmaker(bind=engine)
 # モデルのベースクラス
 Base = declarative_base()
 
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 # ========== モデル定義 ==========
 class Comment(Base):
     __tablename__ = "comments"
@@ -27,6 +35,14 @@ class Comment(Base):
     words = Column(Text, nullable=False)
     like_cnt = Column(Integer, default=0)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String, unique=True, index=True) 
+    password = Column(String) 
+    hashed_password = Column(String)
 
 # テーブル作成
 Base.metadata.create_all(bind=engine)

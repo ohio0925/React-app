@@ -1,0 +1,66 @@
+:root {
+  --yt-red: #ff0000;
+  --yt-red-soft: #ff4d4d;
+  --yt-red-super-soft: #ffe5e5;
+  --bg: #f9f9f9;
+  --card: #ffffff;
+  --text: #0f0f0f;
+  --muted: #606060;
+  --border: #e5e5e5;
+}
+
+.container {
+  max-width: 360px;
+  margin: 80px auto;
+  padding: 32px;
+  background: var(--card);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  display:flex;
+  flex-flow: column;
+}
+
+.title {
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.form {
+  gap: 12px;
+}
+
+.input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.input:focus {
+  border-color: var(--yt-red);
+  outline: none;
+}
+
+.button {
+  background: var(--yt-red);
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 16px;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+  text-align: center;
+}
