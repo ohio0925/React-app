@@ -1,15 +1,13 @@
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text
 from sqlalchemy.orm import sessionmaker, declarative_base
 from datetime import datetime
+import os
 
 # SQLiteファイルを作成（ローカルDB）
-DATABASE_URL = "sqlite:///./comments.db"
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # DBエンジン作成
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={"check_same_thread": False}  # SQLite用設定
-)
+engine = create_engine(DATABASE_URL)
 
 # セッション（DB操作用オブジェクト）作成
 SessionLocal = sessionmaker(bind=engine)
