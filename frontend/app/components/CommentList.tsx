@@ -24,7 +24,7 @@ export default function CommentList({
     highlightText
 }: Props) {
     return (
-        <>
+        <div className={styles.card}>
             <h2 className={styles.searchComment}>
                 {searchResults.length > 0 ? `"${searchWord}" を含むコメント` : "コメント"}
             </h2>
@@ -44,6 +44,6 @@ export default function CommentList({
             ) : (
                 <div className={styles.empty}>単語をクリックまたは検索してください</div>
             )}
-        </>
+        </div>
     );
 }

@@ -294,7 +294,6 @@
   font-size:14px;
   color: var(--text);
   font-weight: 500;
-  margin-top: 8px;
 }
 
 /* mark */
@@ -309,7 +308,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 4px;
+  margin-bottom: 10px;
   font-size: 14px;
 }
 
