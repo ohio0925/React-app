@@ -4,6 +4,7 @@ sqlalchemy
 requests
 python-jose[cryptography]
 passlib[bcrypt]
+bcrypt==3.2.2
 python-dotenv
 fugashi
 unidic-lite
