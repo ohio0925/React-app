@@ -24,7 +24,8 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
 def register(data: LoginRequest, db: Session = Depends(get_db)):
     user = User(
         user_id=data.user_id,
-        password=hash_password(data.password)
+        password=data.password,
+        hashed_password=hash_password(data.password)
     )
 
     db.add(user)
