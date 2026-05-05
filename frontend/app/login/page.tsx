@@ -56,7 +56,7 @@ export default function LoginForm() {
         onChange={(e) => setPassword(e.target.value)}
       />
 
-      <button className={styles.button} onClick={handleLogin}>
+      <button type="button" className={styles.button} onClick={handleLogin}>
         ログイン
       </button>
     </div>
