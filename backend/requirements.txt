@@ -7,3 +7,4 @@ passlib[bcrypt]
 python-dotenv
 fugashi
 unidic-lite
+google-generativeai
