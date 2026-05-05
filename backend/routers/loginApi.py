@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from schemas.request import LoginRequest
 from sqlalchemy.orm import Session
 from database import get_db, User
-from login.auth import verify_password, create_token
+from login.auth import verify_password, create_token, hash_password
 
 router = APIRouter()
 
@@ -19,3 +19,15 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
     token = create_token(user.user_id)
 
     return {"access_token": token}
+
+@router.post("/register")
+def register(data: LoginRequest, db: Session = Depends(get_db)):
+    user = User(
+        user_id=data.user_id,
+        password=hash_password(data.password)
+    )
+
+    db.add(user)
+    db.commit()
+
+    return {"message": "user created"}
