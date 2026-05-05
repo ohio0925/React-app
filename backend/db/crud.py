@@ -9,23 +9,30 @@ def save_comments_to_db(video_id: str, comments_list: list):
         db.query(Comment).filter(Comment.video_id == video_id).delete()
         
         # 新しいコメントを挿入
+        processed = []
         for c in comments_list:
-            comment_text = c["text"]
-            like_cnt = c["like_cnt"]
-            words = mecab_sep(comment_text)
-            words_json = json.dumps(words, ensure_ascii=False)
-            
-            db.add(Comment(
-                video_id=video_id,
-                comment_text=comment_text,
-                words=words_json,
-                like_cnt=like_cnt
-            ))
+            words = mecab_sep(c["text"])
+            processed.append({
+                "text": c["text"],
+                "words": json.dumps(words, ensure_ascii=False),
+                "like_cnt": c["like_cnt"]
+            })
 
+        db.bulk_save_objects([
+            Comment(
+                video_id=video_id,
+                comment_text=p["text"],
+                words=p["words"],
+                like_cnt=p["like_cnt"]
+            )
+            for p in processed
+        ])
         db.commit()
+        
     except Exception as e:
         db.rollback()
         print(f"DB保存エラー: {e}")
+        
     finally:
         db.close()
 

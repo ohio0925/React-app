@@ -17,21 +17,26 @@ export default function CommentSearchForm({
     videoId
 }: Props) {
     return (
-        <div className={styles.searchGroup}>
-            <input
-                className={styles.input}
-                type="text"
-                placeholder="検索単語を入力"
-                value={searchWord}
-                onChange={(e) => setSearchWord(e.target.value)}
-            />
-            <button
-                className={styles.button}
-                onClick={() => handleSearch()}
-                disabled={searchLoading || !videoId}
-            >
-                {searchLoading ? "検索中..." : "検索"}
-            </button>
-        </div>
+        <>
+            <div className={styles.sectionTitle}>
+                コメント一覧
+            </div>
+            <div className={styles.searchGroup}>
+                <input
+                    className={styles.searchInput}
+                    type="text"
+                    placeholder="検索単語を入力"
+                    value={searchWord}
+                    onChange={(e) => setSearchWord(e.target.value)}
+                />
+                <button
+                    className={styles.searchButton}
+                    onClick={() => handleSearch()}
+                    disabled={searchLoading || !videoId}
+                >
+                    {searchLoading ? "検索中..." : "検索"}
+                </button>
+            </div>
+        </>
     );
 }

@@ -19,7 +19,7 @@ export default function RankingList({
       <div className={styles.sectionTitle}>
         頻出単語ランキング
       </div>
-      <div className={styles.sectionTitle}>
+      <div className={styles.rankCommentCount}>
         取得コメント数: {docs?.length ?? 0}件
       </div>
       {ranking?.length ? (

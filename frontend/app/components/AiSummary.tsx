@@ -24,7 +24,13 @@ export default function AiSummary({
                 {loading ? "要約中..." : "コメントを要約"}
             </button>
 
-            {summary && (
+            {loading && (
+                <div className={styles.loaderWrapper}>
+                    <div className={styles.spinner}></div>
+                </div>
+            )}
+
+            {(!loading && summary) && (
                 <div className={styles.summaryContainer}>
                     <h3 className={styles.summaryTitle}>要約結果</h3>
                     <p className={styles.summaryText}>{summary}</p>

@@ -162,7 +162,11 @@ export default function Page() {
           />
         </div>
         {/* 読み込み中表示 */}
-        {loading && <div className={styles.loading}>読み込み中...</div>}
+        {loading && (
+          <div className={styles.loaderWrapper}>
+            <div className={styles.spinner}></div>
+          </div>
+        )}
         {/* APIエラー表示 */}
         {data?.error && <div className={styles.empty}>{data.error}</div>}
 
@@ -201,9 +205,6 @@ export default function Page() {
                       videoId={videoId}
                     />
 
-                    <h2 className={styles.sectionTitle}>
-                      {searchResults.length > 0 ? `"${searchWord}" を含むコメント` : "コメント"}
-                    </h2>
                     <SortControls
                       sortOrder={sortOrder}
                       setSortOrder={setSortOrder}

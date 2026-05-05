@@ -25,6 +25,9 @@ export default function CommentList({
 }: Props) {
     return (
         <>
+            <h2 className={styles.searchComment}>
+                {searchResults.length > 0 ? `"${searchWord}" を含むコメント` : "コメント"}
+            </h2>
             {searchLoading ? (
                 <div>検索中...</div>
             ) : searchResults.length ? (

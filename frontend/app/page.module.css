@@ -11,7 +11,7 @@
 
 .page {
   min-height: 100vh;
-  background:  var(--bg);
+  background: var(--bg);
   padding: 40px 20px;
   display: flex;
   justify-content: center;
@@ -57,6 +57,11 @@
   background: transparent;
 }
 
+.inputGroup:focus-within {
+  border-color: var(--yt-red-soft);
+  box-shadow: 0 0 0 2px rgba(255, 59, 48, 0.2);
+}
+
 .button {
   background: var(--yt-red);
   color: white;
@@ -65,6 +70,7 @@
   padding: 10px 18px;
   font-weight: 600;
   cursor: pointer;
+  font-size: 14px;
   transition: all 0.2s;
 }
 
@@ -83,18 +89,36 @@
   border-radius: 16px;
   padding: 20px;
   border: 1px solid var(--border);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
   margin-bottom: 20px;
   overflow-y: auto;
   max-height: 650px;
 }
 
+.card::-webkit-scrollbar {
+  width: 6px;
+}
+
+.card::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 10px;
+}
+
 /* セクションタイトル */
 .sectionTitle {
+  border-bottom: var(--yt-red) 2px solid;
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 12px;
-  color: var(--text); /* #0f0f0f */
+  color: var(--text);
+  /* #0f0f0f */
+}
+
+.rankCommentCount {
+  font-size:14px;
+  color: var(--text);
+  font-weight: 500;
+  margin-bottom: 8px;
 }
 
 /* ランキング */
@@ -124,8 +148,9 @@
 
 .rankWord {
   font-size: 14px;
-  color: #0f0f0f;
+  color: var(--text);
   font-weight: 500;
+  padding-left: auto;
 }
 
 .rankCount {
@@ -222,7 +247,7 @@
   flex-direction: column;
   border-radius: 16px;
   border: 1px solid var(--border);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 /* page.module.css に追加 */
@@ -233,8 +258,43 @@
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 6px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  height: 59px;
   margin-bottom: 10px;
+}
+
+.searchInput {
+  flex: 1;
+  color: var(--text);
+  font-size: 14px;
+  border: none;
+  outline: none;
+  padding: 12px 16px;
+}
+
+.searchButton {
+  background: var(--yt-red);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.searchGroup:focus-within {
+  border-color: var(--yt-red-soft);
+  box-shadow: 0 0 0 2px rgba(255, 59, 48, 0.2);
+}
+
+.searchComment {
+  font-size:14px;
+  color: var(--text);
+  font-weight: 500;
+  margin-top: 8px;
 }
 
 /* mark */
@@ -249,29 +309,40 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
+  font-size: 14px;
 }
 
 .sortButton {
+  flex: 1;
   padding: 4px 12px;
+  font-size: 12px;
   border: 1px solid #ccc;
   border-radius: 4px;
   background: #fff;
   cursor: pointer;
+  color: #666;
+}
+
+.sortButton:hover {
+  background: #f5f5f5;
 }
 
 .sortButtonActive {
+  flex: 1;
   padding: 4px 12px;
-  border: 1px solid #0070f3;
+  font-size: 12px;
+  border: 1px solid var(--yt-red-soft);
   border-radius: 4px;
-  background: #e8f0fe;
-  color: #0070f3;
+  background: #fff;
+  color: var(--yt-red-soft);
   font-weight: bold;
   cursor: pointer;
 }
 
 .sortButtonReset {
   padding: 4px 12px;
+  font-size: 12px;
   border: 1px solid #999;
   border-radius: 4px;
   background: #f5f5f5;
@@ -287,6 +358,7 @@
 
 .tab {
   padding: 8px 16px;
+  opacity: 0.6;
   color: var(--text);
   background: none;
   border: none;
@@ -302,8 +374,9 @@
 .activeTab {
   padding: 8px 16px;
   color: var(--text);
-  border-bottom: 2px solid #0070f3;
+  border-bottom: 2px solid var(--yt-red);
   font-weight: bold;
+  opacity: 1;
 }
 
 .summaryText {
@@ -316,7 +389,7 @@
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 12px;
-  border-bottom: 2px solid #0070f3;
+  border-bottom: 2px solid var(--yt-red);
   color: var(--text);
 }
 
@@ -327,6 +400,29 @@
   border-radius: 16px;
   padding: 20px;
   border: 1px solid var(--border);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   margin-top: 20px;
+}
+
+/* ローディングスピナー */
+.loaderWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ddd;
+  border-top: 4px solid #333;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
