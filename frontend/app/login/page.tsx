@@ -41,8 +41,6 @@ export default function LoginForm() {
 
       document.cookie = `token=${data.access_token}; path=/`;
 
-      setMessage("ログイン成功");
-
       router.push("/dashboard");
 
     } catch (error) {
