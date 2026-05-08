@@ -1,5 +1,6 @@
 export const fetchComments = async (url: string) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/comments`, {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const res = await fetch(`${API_URL}/comments`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ url }),
@@ -10,7 +11,8 @@ export const fetchComments = async (url: string) => {
 };
 
 export const searchComments = async (word: string, video_id: string) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/comments/search`, {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const res = await fetch(`${API_URL}/comments/search`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ word, video_id }),
@@ -21,7 +23,8 @@ export const searchComments = async (word: string, video_id: string) => {
 };
 
 export const fetchSummary = async (video_id: string) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/summary`, {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const res = await fetch(`${API_URL}/summary`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ video_id }),

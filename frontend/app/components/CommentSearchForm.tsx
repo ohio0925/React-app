@@ -34,7 +34,11 @@ export default function CommentSearchForm({
                     onClick={() => handleSearch()}
                     disabled={searchLoading || !videoId}
                 >
-                    {searchLoading ? "検索中..." : "検索"}
+                    {searchLoading ? (
+                        <div className={styles.searchSpinner}></div>
+                    ) : (
+                        "検索"
+                    )}
                 </button>
             </div>
         </>
