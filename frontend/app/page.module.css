@@ -273,6 +273,8 @@
 }
 
 .searchButton {
+  height: 45px;
+  width: 64px;
   background: var(--yt-red);
   color: white;
   border: none;
