@@ -1,5 +1,8 @@
 "use client";
 import styles from "@/app/page.module.css";
+import remarkGfm from "remark-gfm";
+import "github-markdown-css/github-markdown-light.css";
+import ReactMarkdown from "react-markdown";
 
 type Props = {
     summary: string;
@@ -33,7 +36,13 @@ export default function AiSummary({
             {(!loading && summary) && (
                 <div className={styles.summaryContainer}>
                     <h3 className={styles.summaryTitle}>要約結果</h3>
-                    <p className={styles.summaryText}>{summary}</p>
+                    <p className={styles.summaryText}>
+                        <div className="markdown-body">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                {summary}
+                            </ReactMarkdown>
+                        </div>
+                    </p>
                 </div>
             )}
         </div>

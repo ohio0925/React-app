@@ -15,7 +15,7 @@ def save_comments_to_db(video_id: str, comments_list: list):
             processed.append({
                 "text": c["text"],
                 "words": json.dumps(words, ensure_ascii=False),
-                "like_cnt": c["like_cnt"]
+                "like_cnt": c["like_cnt"],
             })
 
         db.bulk_save_objects([
@@ -23,7 +23,7 @@ def save_comments_to_db(video_id: str, comments_list: list):
                 video_id=video_id,
                 comment_text=p["text"],
                 words=p["words"],
-                like_cnt=p["like_cnt"]
+                like_cnt=p["like_cnt"],
             )
             for p in processed
         ])

@@ -41,6 +41,8 @@ def fetch_comments(video_id: str):
             reply_cnt = item['snippet']['totalReplyCount']
             # グッド数
             like_cnt = item['snippet']['topLevelComment']['snippet']['likeCount']
+            # 投稿日時
+            published_at = item['snippet']['topLevelComment']['snippet']['publishedAt']
             # Id 
             parentId = item['snippet']['topLevelComment']['id']
             # コメントリストにコメントとlike_cntを格納（辞書形式）
@@ -84,6 +86,8 @@ def fetch_comments(video_id: str):
             like_cnt = comment_info['snippet']['likeCount']
             # ユーザー名
             user_name = comment_info['snippet']['authorDisplayName']
+            # 投稿日時
+            published_at = comment_info['snippet']['publishedAt']
 
             # コメントリストにコメントとlike_cntを格納
             comments_list.append({"text": text, "like_cnt": like_cnt})
