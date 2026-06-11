@@ -35,7 +35,8 @@ type AiSummaryResponse = {
 
 // ページコンポーネント
 export default function Page() {
-  // ログイン状態の確認とリダイレクト
+  // ログイン状態の確認とリダイレクト(コメントアウトしているのは、今回はダッシュボードに直接アクセスするため)
+  /*
   const router = useRouter();
 
   useEffect(() => {
@@ -48,6 +49,7 @@ export default function Page() {
       router.push("/login");
     }
   }, []);
+  */
 
   // URL関連
   const [url, setUrl] = useState("");
